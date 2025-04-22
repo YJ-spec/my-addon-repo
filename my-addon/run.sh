@@ -1,3 +1,8 @@
 #!/bin/sh
-echo "Hello from my add-on!"
-sleep 10
+
+echo "Add-on started at $(date)"
+
+while true; do
+    echo "Current time: $(date)"
+    sleep 10
+done
