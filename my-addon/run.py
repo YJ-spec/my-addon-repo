@@ -10,8 +10,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 TOPICS = os.getenv("MQTT_TOPICS", "+/+/data,+/+/control").split(",")
 MQTT_BROKER = os.getenv("MQTT_BROKER", "core-mosquitto")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
-MQTT_USERNAME = os.getenv("MQTT_USERNAME")
-MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
+# MQTT_USERNAME = os.getenv("MQTT_USERNAME")
+# MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
+MQTT_USERNAME = "test"
+MQTT_PASSWORD = "test"
 
 def on_connect(client, userdata, flags, rc):
     logging.info(f"Connected to MQTT broker with result code {rc}")
@@ -27,8 +29,8 @@ def main():
 
     client = mqtt.Client()
     
-    if MQTT_USERNAME and MQTT_PASSWORD:
-        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+#    if MQTT_USERNAME and MQTT_PASSWORD:
+    client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
 
     client.on_connect = on_connect
     client.on_message = on_message
