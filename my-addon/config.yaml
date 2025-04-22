@@ -1,0 +1,13 @@
+name: "My Test Add-on"
+version: "1.0.0"
+slug: "my_addon"
+description: "A simple test add-on"
+startup: "services"
+boot: "auto"
+arch:
+  - aarch64
+  - amd64
+  - armv7
+url: "https://github.com/YJ-spec/my-addon-repo"
+init: false
+ingress: false
