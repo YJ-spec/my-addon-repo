@@ -7,13 +7,14 @@ import paho.mqtt.client as mqtt
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # 從環境變數中取得設定（可透過 config.json 傳入）
-TOPICS = os.getenv("MQTT_TOPICS", "+/+/data,+/+/control").split(",")
-MQTT_BROKER = os.getenv("MQTT_BROKER", "core-mosquitto")
-MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
-MQTT_USERNAME = os.getenv("MQTT_USERNAME")
-MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
-# MQTT_USERNAME = "test"
-# MQTT_PASSWORD = "test"
+with open("/data/options.json", "r") as f:
+    options = json.load(f)
+
+TOPICS = options.get("mqtt_topics", "+/+/data,+/+/control").split(",")
+MQTT_BROKER = options.get("mqtt_broker", "core-mosquitto")
+MQTT_PORT = int(options.get("mqtt_port", 1883))
+MQTT_USERNAME = options.get("mqtt_username", "")
+MQTT_PASSWORD = options.get("mqtt_password", "")
 
 def on_connect(client, userdata, flags, rc):
     logging.info(f"Connected to MQTT broker with result code {rc}")
