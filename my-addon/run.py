@@ -13,7 +13,7 @@ HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
     "Content-Type": "application/json"
 }
-
+# HA不支援requests 沒有LONG TOKEN的訪問
 # Supervisor API 的 base URL
 BASE_URL = "http://supervisor/core/api"
 
