@@ -2,6 +2,7 @@ import time
 import logging
 import os
 import paho.mqtt.client as mqtt
+import json
 
 # 設定日誌格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
