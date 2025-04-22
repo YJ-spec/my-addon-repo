@@ -1,7 +1,7 @@
 FROM python:3.11-alpine
 
 # 安裝 paho-mqtt 套件
-RUN pip install paho-mqtt
+RUN pip install paho-mqtt requests
 
 COPY run.py /run.py
 CMD ["python3", "/run.py"]
