@@ -4,7 +4,6 @@ import paho.mqtt.client as mqtt
 import requests
 import os
 
-
 # 設定日誌格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
@@ -15,8 +14,8 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-# 注意！網址是 "http://supervisor/core/api"
-url = "http://supervisor/core/api/states"
+# Supervisor API 的 base URL
+BASE_URL = "http://supervisor/core/api"
 
 # 讀取 HA 傳入的選項設定
 with open("/data/options.json", "r") as f:
@@ -25,8 +24,8 @@ with open("/data/options.json", "r") as f:
 TOPICS = options.get("mqtt_topics", "+/+/data,+/+/control").split(",")
 MQTT_BROKER = options.get("mqtt_broker", "core-mosquitto")
 MQTT_PORT = int(options.get("mqtt_port", 1883))
-MQTT_USERNAME = options.get("mqtt_username", "test")
-MQTT_PASSWORD = options.get("mqtt_password", "test")
+MQTT_USERNAME = options.get("mqtt_username", "")
+MQTT_PASSWORD = options.get("mqtt_password", "")
 
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
@@ -37,20 +36,37 @@ def on_connect(client, userdata, flags, rc):
 
 # 當收到訊息時執行
 def on_message(client, userdata, msg):
-    logging.info(f"Received message on {msg.topic}: {msg.payload.decode()}")
+    payload = msg.payload.decode()
+    logging.info(f"Received message on {msg.topic}: {payload}")
 
+    # ===== 取得裝置清單範例 =====
     try:
-        response = requests.get(URL, headers=HEADERS)
+        entity_url = f"{BASE_URL}/states"
+        response = requests.get(entity_url, headers=HEADERS, timeout=5)
         if response.status_code == 200:
             entities = response.json()
-            logging.info("=== Entity List Start ===")
+            logging.info("=== Entity List (sensor only) ===")
             for e in entities:
-                logging.info(e["entity_id"])
-            logging.info("=== Entity List End ===")
+                if e["entity_id"].startswith("sensor."):
+                    logging.info(e["entity_id"])
+            logging.info("=== End of List ===")
         else:
             logging.warning(f"Failed to get entities: {response.status_code} - {response.text}")
     except Exception as e:
         logging.error(f"Error fetching entity list: {e}")
+
+    # ===== 範例：根據 MQTT 指令開啟燈光 =====
+    if payload == "turn_on_light":
+        try:
+            service_url = f"{BASE_URL}/services/light/turn_on"
+            data = {"entity_id": "light.your_light_id"}  # 修改為你的實體ID
+            response = requests.post(service_url, headers=HEADERS, json=data, timeout=5)
+            if response.status_code == 200:
+                logging.info("Light turned on successfully.")
+            else:
+                logging.warning(f"Failed to turn on light: {response.status_code} - {response.text}")
+        except Exception as e:
+            logging.error(f"Error turning on light: {e}")
 
 def main():
     logging.info("Add-on started")
@@ -65,7 +81,6 @@ def main():
 
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.loop_forever()  # 持續執行直到 Add-on 被 HA 關閉
-
 
 if __name__ == "__main__":
     main()
