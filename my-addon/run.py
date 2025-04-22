@@ -10,8 +10,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 TOPICS = os.getenv("MQTT_TOPICS", "+/+/data,+/+/control").split(",")
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
-MQTT_USERNAME = options.get("mqtt_username")
-MQTT_PASSWORD = options.get("mqtt_password")
+MQTT_USERNAME = os.getenv("MQTT_USERNAME", "test")  # 預設為 "test"
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "test")  # 預設為 "test"
 
 if MQTT_USERNAME and MQTT_PASSWORD:
     client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
