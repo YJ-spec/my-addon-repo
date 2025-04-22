@@ -1,9 +1,13 @@
+import logging
 import time
 
+# 設定日誌格式
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+
 def main():
-    print(f"Add-on started at {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    logging.info("Add-on started")
     while True:
-        print(f"Current time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+        logging.info(f"Current time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
         time.sleep(10)
 
 if __name__ == "__main__":
