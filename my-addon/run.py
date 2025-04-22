@@ -30,12 +30,16 @@ def main():
     logging.info("Add-on started")
 
     client = mqtt.Client()
-    client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+
+    if MQTT_USERNAME and MQTT_PASSWORD:
+        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+
     client.on_connect = on_connect
     client.on_message = on_message
 
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.loop_forever()  # 持續執行直到 Add-on 被 HA 關閉
+
 
 if __name__ == "__main__":
     main()
