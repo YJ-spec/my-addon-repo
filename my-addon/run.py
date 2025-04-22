@@ -1,21 +1,17 @@
 import time
 import logging
-import os
 import paho.mqtt.client as mqtt
 
 # 設定日誌格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
-# 取得自定義主題（從環境變數）
-TOPICS = os.getenv("MQTT_TOPICS", "+/+/data,+/+/control").split(",")
-MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
-MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
-MQTT_USERNAME = os.getenv("MQTT_USERNAME", "test")  # 預設為 "test"
-MQTT_PASSWORD = os.getenv("MQTT_PASSWORD", "test")  # 預設為 "test"
+# 寫死 MQTT 設定
+TOPICS = ["+/+/data", "+/+/control"]
+MQTT_BROKER = "core-mosquitto"
+MQTT_PORT = 1883
+MQTT_USERNAME = "test"
+MQTT_PASSWORD = "test"
 
-if MQTT_USERNAME and MQTT_PASSWORD:
-    client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-		
 def on_connect(client, userdata, flags, rc):
     logging.info(f"Connected to MQTT broker with result code {rc}")
     for topic in TOPICS:
@@ -29,6 +25,7 @@ def main():
     logging.info("Add-on started")
 
     client = mqtt.Client()
+    client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
     client.on_connect = on_connect
     client.on_message = on_message
 
