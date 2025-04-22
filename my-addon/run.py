@@ -38,7 +38,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     payload = msg.payload.decode()
     logging.info(f"Received message on {msg.topic}: {payload}")
-		logging.info(f"Using token: {TOKEN}")
+    logging.info(f"Using token: {TOKEN}")
 
     # ===== 取得裝置清單範例 =====
     try:
