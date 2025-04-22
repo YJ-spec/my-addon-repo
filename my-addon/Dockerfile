@@ -1,8 +1,7 @@
-# 使用包含 Python 的基礎映像
 FROM python:3.11-alpine
 
-# 複製 Python 腳本到容器中
-COPY run.py /run.py
+# 安裝 paho-mqtt 套件
+RUN pip install paho-mqtt
 
-# 設定容器啟動時執行 Python 腳本
+COPY run.py /run.py
 CMD ["python3", "/run.py"]

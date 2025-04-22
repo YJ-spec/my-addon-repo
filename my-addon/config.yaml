@@ -1,7 +1,7 @@
 name: "My Test Add-on"
-version: "1.0.6"
+version: "1.0.7"
 slug: "my_addon"
-description: "A simple test add-on using Python"
+description: "A test add-on with MQTT support"
 startup: "services"
 boot: "auto"
 arch:
@@ -11,3 +11,13 @@ arch:
 url: "https://github.com/YJ-spec/my-addon-repo"
 init: false
 ingress: false
+
+options:
+  mqtt_topics: "+/+/data,+/+/control"
+  mqtt_broker: "localhost"
+  mqtt_port: 1883
+
+schema:
+  mqtt_topics: str
+  mqtt_broker: str
+  mqtt_port: int
