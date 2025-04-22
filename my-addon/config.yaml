@@ -1,5 +1,5 @@
 name: "My Test Add-on"
-version: "1.0.12"
+version: "1.0.13"
 slug: "my_addon"
 description: "A test add-on with MQTT support"
 startup: "services"
@@ -14,7 +14,7 @@ ingress: false
 
 options:
   mqtt_topics: "+/+/data,+/+/control"
-  mqtt_broker: "localhost"
+  mqtt_broker: "core-mosquitto"
   mqtt_port: 1883
   mqtt_username: ""
   mqtt_password: ""
@@ -23,3 +23,5 @@ schema:
   mqtt_topics: str
   mqtt_broker: str
   mqtt_port: int
+  mqtt_username: str
+  mqtt_password: str 
