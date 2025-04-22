@@ -1,7 +1,7 @@
 name: "My Test Add-on"
-version: "1.0.2"
+version: "1.0.5"
 slug: "my_addon"
-description: "A simple test add-on"
+description: "A simple test add-on using Python"
 startup: "services"
 boot: "auto"
 arch:
