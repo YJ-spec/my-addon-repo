@@ -23,8 +23,8 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-# HA 標準 API 的 base URL（依照實際網址調整）
-BASE_URL = "http://127.0.0.1:8123/api"
+# HA 標準 API 的 base URL
+BASE_URL = "http://homeassistant:8123/api/states"
 
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
