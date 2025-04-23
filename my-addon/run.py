@@ -51,19 +51,16 @@ def on_connect(client, userdata, flags, rc):
 
 def generate_mqtt_discovery_config(device_name, device_mac, sensor_type, sensor_name):
     """ 根據 MQTT 訊息生成 Home Assistant MQTT Discovery 設定 """
-    unit_of_measurement = unit_conditions.get(sensor_name, "unit")  # 預設為 "unit"
-    
     # 生成 topic
     topic = f"{device_name}/{device_mac}/{sensor_type}"
 
-    # 生成 config
+    # 基本 config
     config = {
         "name": sensor_name,
         "state_topic": topic,
         "value_template": f"{{{{ value_json.{sensor_type}.{sensor_name} }}}}",
         "unique_id": f"{device_name}_{device_mac}_{sensor_name}",
         "state_class": "measurement",
-        "unit_of_measurement": unit_of_measurement,
         "device": {
             "identifiers": f"{device_name}_{device_mac}",
             "name": f"{device_name}_{device_mac}",
@@ -71,9 +68,13 @@ def generate_mqtt_discovery_config(device_name, device_mac, sensor_type, sensor_
             "manufacturer": "CurieJet"
         }
     }
-    
-    return config
 
+    # 只有在條件對到時才加上單位
+    if sensor_name in unit_conditions:
+        config["unit_of_measurement"] = unit_conditions[sensor_name]
+
+    return config
+		
 # 處理 MQTT 訊息並產生 Discovery 設定
 def on_message(client, userdata, msg):
     payload = msg.payload.decode()
