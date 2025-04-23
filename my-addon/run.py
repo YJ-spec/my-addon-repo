@@ -52,7 +52,7 @@ def on_connect(client, userdata, flags, rc):
 def generate_mqtt_discovery_config(device_name, device_mac, sensor_type, sensor_name):
     """ 根據 MQTT 訊息生成 Home Assistant MQTT Discovery 設定 """
     # 生成 topic
-    topic = f"{device_name}/{device_mac}/{sensor_type}"
+    topic = f"{device_name}/{device_mac}/data"
 
     # 基本 config
     config = {
