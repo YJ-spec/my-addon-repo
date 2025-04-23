@@ -80,12 +80,15 @@ def on_message(client, userdata, msg):
     logging.info(f"Received message on {msg.topic}: {payload}")
 
     try:
-        message_json = json.loads(payload)
-
         # 提取 deviceName 和 deviceMac
-        device_name = message_json.get("deviceName")
-        device_mac = message_json.get("deviceMac")
-
+        topic_parts = msg.topic.split('/')
+        if len(topic_parts) < 3:
+            logging.warning(f"Invalid topic format: {msg.topic}")
+            return
+        device_name = topic_parts[0]
+        device_mac = topic_parts[1]
+				
+        message_json = json.loads(payload)
         if not device_name or not device_mac:
             logging.warning(f"Missing deviceName or deviceMac in message: {payload}")
             return
