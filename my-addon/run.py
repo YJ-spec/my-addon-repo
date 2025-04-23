@@ -1,7 +1,7 @@
 import logging
 import json
 import paho.mqtt.client as mqtt
-
+import requests
 # 設定日誌格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
