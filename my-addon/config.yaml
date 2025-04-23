@@ -1,5 +1,5 @@
 name: "My Test Add-on"
-version: "1.0.16"
+version: "1.0.17"
 slug: "my_addon"
 description: "A test add-on with MQTT support"
 startup: "services"
@@ -18,10 +18,12 @@ options:
   mqtt_port: 1883
   mqtt_username: ""
   mqtt_password: ""
+  HA_LONG_LIVED_TOKEN: ""
 
 schema:
   mqtt_topics: str
   mqtt_broker: str
   mqtt_port: int
-  mqtt_username: str
-  mqtt_password: str 
+  mqtt_username: str?
+  mqtt_password: str?
+  HA_LONG_LIVED_TOKEN: str?
