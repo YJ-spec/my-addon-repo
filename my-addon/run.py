@@ -24,7 +24,7 @@ HEADERS = {
 }
 
 # HA 標準 API 的 base URL
-BASE_URL = "http://homeassistant:8123/api/states"
+BASE_URL = "http://homeassistant:8123/api"
 
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
