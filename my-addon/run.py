@@ -61,6 +61,7 @@ def generate_mqtt_discovery_config(device_name, device_mac, sensor_type, sensor_
         "value_template": f"{{{{ value_json.{sensor_type}.{sensor_name} }}}}",
         "unique_id": f"{device_name}_{device_mac}_{sensor_name}",
         "state_class": "measurement",
+        "force_update": True,
         "device": {
             "identifiers": f"{device_name}_{device_mac}",
             "name": f"{device_name}_{device_mac}",
@@ -69,11 +70,13 @@ def generate_mqtt_discovery_config(device_name, device_mac, sensor_type, sensor_
         }
     }
 
-    # 只有在條件對到時才加上單位
+    # 如果有單位才加上
     if sensor_name in unit_conditions:
         config["unit_of_measurement"] = unit_conditions[sensor_name]
 
     return config
+
+
 		
 # 處理 MQTT 訊息並產生 Discovery 設定
 def on_message(client, userdata, msg):
