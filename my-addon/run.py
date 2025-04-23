@@ -58,6 +58,7 @@ def generate_mqtt_discovery_config(device_name, device_mac, sensor_type, sensor_
     config = {
         "name": sensor_name,
         "state_topic": topic,
+        "expire_after": 300,
         "value_template": f"{{{{ value_json.{sensor_type}.{sensor_name} }}}}",
         "unique_id": f"{device_name}_{device_mac}_{sensor_name}",
         "state_class": "measurement",
