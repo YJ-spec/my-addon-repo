@@ -5,8 +5,19 @@ import paho.mqtt.client as mqtt
 # 設定日誌格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
+
+# 讀取 HA 傳入的選項設定
+with open("/data/options.json", "r") as f:
+    options = json.load(f)
+
 # 從環境變數取得 Long-Lived Token
-LONG_TOKEN = os.getenv("HA_LONG_LIVED_TOKEN", "")
+TOPICS = options.get("mqtt_topics", "+/+/data,+/+/control").split(",")
+MQTT_BROKER = options.get("mqtt_broker", "core-mosquitto")
+MQTT_PORT = int(options.get("mqtt_port", 1883))
+MQTT_USERNAME = options.get("mqtt_username", "")
+MQTT_PASSWORD = options.get("mqtt_password", "")
+LONG_TOKEN = options.get("HA_LONG_LIVED_TOKEN", "")
+
 HEADERS = {
     "Authorization": f"Bearer {LONG_TOKEN}",
     "Content-Type": "application/json"
@@ -14,16 +25,6 @@ HEADERS = {
 
 # HA 標準 API 的 base URL（依照實際網址調整）
 BASE_URL = "http://127.0.0.1:8123/api"
-
-# 讀取 HA 傳入的選項設定
-with open("/data/options.json", "r") as f:
-    options = json.load(f)
-
-TOPICS = options.get("mqtt_topics", "+/+/data,+/+/control").split(",")
-MQTT_BROKER = options.get("mqtt_broker", "core-mosquitto")
-MQTT_PORT = int(options.get("mqtt_port", 1883))
-MQTT_USERNAME = options.get("mqtt_username", "")
-MQTT_PASSWORD = options.get("mqtt_password", "")
 
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
