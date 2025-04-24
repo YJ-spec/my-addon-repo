@@ -1,3 +1,6 @@
-name: "My Custom Add-ons"
-url: "https://github.com/YJ-spec/my-addon-repo"
-maintainer: "YJ-spec <your@email.com>"
+name: CurieJet MQTT Integration
+url: https://github.com/YJ-spec/my-addon-repo
+maintainer: YJ-spec <your@email.com>
+description: >
+  This custom add-on provides MQTT Discovery integration for CurieJet devices
+  in Home Assistant, such as ZP2, ZH1, and others.
