@@ -1,7 +1,11 @@
-name: "My Test Add-on"
-version: "1.0.33"
-slug: "my_addon"
-description: "A test add-on with MQTT support"
+name: "curiejet integration"
+version: "1.1.0"
+slug: "curiejet_integration"
+description: "This Home Assistant add-on listens to MQTT messages and dynamically generates 
+  MQTT Discovery configurations for CurieJet devices (e.g., ZP2, ZH1). 
+  It enables seamless integration of sensor and control data from various CurieJet models 
+  into your Home Assistant setup.
+"
 startup: "services"
 boot: "auto"
 arch:
