@@ -56,6 +56,7 @@ def is_device_registered(device_name, device_mac, candidate_sensors):
     return False
 
 
+
         
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
@@ -108,10 +109,9 @@ def on_message(client, userdata, msg):
         device_name = topic_parts[0]
         device_mac = topic_parts[1]
 				
-        device_info = query_ha_device_info(device_name, device_mac)
-        
-        if not device_info is None:
-            return   
+        candidate_sensors = list(message_json.get("data", {}).keys()) + list(message_json.get("data1", {}).keys())
+        if is_device_registered(device_name, device_mac, candidate_sensors):
+            return   # 裝置已註冊，跳過 discovery 設定
             
         message_json = json.loads(payload)
         if not device_name or not device_mac:

@@ -1,5 +1,5 @@
 name: "My Test Add-on"
-version: "1.0.31"
+version: "1.0.32"
 slug: "my_addon"
 description: "A test add-on with MQTT support"
 startup: "services"
