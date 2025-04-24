@@ -41,32 +41,20 @@ unit_conditions = {
     "rset": "rpm",
     "rpm": "rpm"
 }
-def query_ha_device_info(device_name, device_mac):
-    """查詢 Home Assistant 中裝置的註冊資訊"""
-    device_identifier = f"{device_name}_{device_mac}"
+def is_device_registered(device_name, device_mac, candidate_sensors):
+    """檢查裝置是否已註冊，只要其中一個代表性實體存在即可"""
+    for sensor in candidate_sensors:
+        entity_id = f"sensor.{device_name}_{device_mac}_{sensor}"
+        url = f"{BASE_URL}/states/{entity_id}"
+        try:
+            response = requests.get(url, headers=HEADERS)
+            if response.status_code == 200:
+                logging.info(f"裝置 {device_name}_{device_mac} 已註冊（找到 {entity_id}）")
+                return True
+        except Exception as e:
+            logging.error(f"查詢 {entity_id} 發生錯誤: {e}")
+    return False
 
-    try:
-        # 查詢所有裝置清單
-        response = requests.get(f"{BASE_URL}/devices", headers=HEADERS)
-        if response.status_code != 200:
-            logging.warning(f"無法取得裝置清單: {response.status_code} - {response.text}")
-            return None
-
-        all_devices = response.json()
-        # 根據 identifier 過濾出目標裝置
-        for device in all_devices:
-            identifiers = device.get("identifiers", [])
-            for identifier in identifiers:
-                # identifier 格式應為 list，e.g. [["domain", "device_name_mac"]]
-                if isinstance(identifier, list) and device_identifier in identifier:
-                    return device
-
-        logging.info(f"裝置 {device_identifier} 不存在，代表從未註冊或已被刪除")
-        return None
-
-    except Exception as e:
-        logging.error(f"查詢裝置資訊時發生錯誤: {e}")
-        return None
 
         
 # 當連線成功時執行
@@ -120,9 +108,9 @@ def on_message(client, userdata, msg):
         device_name = topic_parts[0]
         device_mac = topic_parts[1]
 				
-        state = query_ha_device_info(device_name, device_mac)
-        logging.warning(f"state : {state}")
-        if not (state is None ):
+        device_info = query_ha_device_info(device_name, device_mac)
+        
+        if not device_info is None:
             return   
             
         message_json = json.loads(payload)
