@@ -101,6 +101,9 @@ def on_message(client, userdata, msg):
     logging.info(f"Received message on {msg.topic}: {payload}")
 
     try:
+        # 先解析 JSON
+        message_json = json.loads(payload)
+        
         # 提取 deviceName 和 deviceMac
         topic_parts = msg.topic.split('/')
         if len(topic_parts) < 3:
@@ -108,10 +111,12 @@ def on_message(client, userdata, msg):
             return
         device_name = topic_parts[0]
         device_mac = topic_parts[1]
-				
+		
+        # 準備感測器名稱列表
         candidate_sensors = list(message_json.get("data", {}).keys()) + list(message_json.get("data1", {}).keys())
+        # 裝置已註冊，跳過 discovery 設定
         if is_device_registered(device_name, device_mac, candidate_sensors):
-            return   # 裝置已註冊，跳過 discovery 設定
+            return  
             
         message_json = json.loads(payload)
         if not device_name or not device_mac:
