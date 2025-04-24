@@ -41,7 +41,22 @@ unit_conditions = {
     "rset": "rpm",
     "rpm": "rpm"
 }
-
+def query_ha_device_state(device_name, device_mac, sensor_name):
+    """ 查詢 Home Assistant 中設備的當前狀態 """
+    device_id = f"{device_name}_{device_mac}_{sensor_name}"
+    url = f"{BASE_URL}/states/sensor.{device_id}"
+    
+    try:
+        response = requests.get(url, headers=HEADERS)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            logging.warning(f"Failed to get state for {device_id}: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        logging.error(f"Error querying device state: {e}")
+        return None
+        
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
     logging.info(f"Connected to MQTT broker with result code {rc}")
@@ -93,6 +108,12 @@ def on_message(client, userdata, msg):
         device_name = topic_parts[0]
         device_mac = topic_parts[1]
 				
+        state = query_ha_device_state(device_name, device_mac, sensor)
+        logging.warning(f"state : {state}")
+        if not (state is None or state.get("state") != "unavailable"):
+
+            return   
+            
         message_json = json.loads(payload)
         if not device_name or not device_mac:
             logging.warning(f"Missing deviceName or deviceMac in message: {payload}")
