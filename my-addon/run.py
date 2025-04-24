@@ -41,21 +41,33 @@ unit_conditions = {
     "rset": "rpm",
     "rpm": "rpm"
 }
-def query_ha_device_state(device_name, device_mac, sensor_name):
-    """ 查詢 Home Assistant 中設備的當前狀態 """
-    device_id = f"{device_name}_{device_mac}_{sensor_name}"
-    url = f"{BASE_URL}/states/sensor.{device_id}"
-    
+def query_ha_device_info(device_name, device_mac):
+    """查詢 Home Assistant 中裝置的註冊資訊"""
+    device_identifier = f"{device_name}_{device_mac}"
+
     try:
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            logging.warning(f"Failed to get state for {device_id}: {response.status_code} - {response.text}")
+        # 查詢所有裝置清單
+        response = requests.get(f"{BASE_URL}/devices", headers=HEADERS)
+        if response.status_code != 200:
+            logging.warning(f"無法取得裝置清單: {response.status_code} - {response.text}")
             return None
-    except Exception as e:
-        logging.error(f"Error querying device state: {e}")
+
+        all_devices = response.json()
+        # 根據 identifier 過濾出目標裝置
+        for device in all_devices:
+            identifiers = device.get("identifiers", [])
+            for identifier in identifiers:
+                # identifier 格式應為 list，e.g. [["domain", "device_name_mac"]]
+                if isinstance(identifier, list) and device_identifier in identifier:
+                    return device
+
+        logging.info(f"裝置 {device_identifier} 不存在，代表從未註冊或已被刪除")
         return None
+
+    except Exception as e:
+        logging.error(f"查詢裝置資訊時發生錯誤: {e}")
+        return None
+
         
 # 當連線成功時執行
 def on_connect(client, userdata, flags, rc):
@@ -108,10 +120,9 @@ def on_message(client, userdata, msg):
         device_name = topic_parts[0]
         device_mac = topic_parts[1]
 				
-        state = query_ha_device_state(device_name, device_mac, sensor)
+        state = query_ha_device_info(device_name, device_mac)
         logging.warning(f"state : {state}")
-        if not (state is None or state.get("state") != "unavailable"):
-
+        if not (state is None ):
             return   
             
         message_json = json.loads(payload)
