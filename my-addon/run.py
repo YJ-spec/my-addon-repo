@@ -55,6 +55,23 @@ def is_device_registered(device_name, device_mac, candidate_sensors):
             logging.error(f"查詢 {entity_id} 發生錯誤: {e}")
     return False
 
+# 新增這段 function：檢查是否需要回傳控制指令
+def check_and_respond_control(client, topic, message_json):
+    parts = topic.split('/')
+    if len(parts) < 3:
+        return
+    device_name, device_mac, message_type = parts
+
+    has_required_payload = (
+        message_json.get("Heartbeat") is not None or
+        message_json.get("MODEL") is not None
+    )
+
+    if has_required_payload:
+        control_topic = f"{device_name}/{device_mac}/control"
+        control_payload = json.dumps({ "Update": "1" })
+        client.publish(control_topic, control_payload)
+        logging.info(f"Sent control message to {control_topic}: {control_payload}")
 
 
         
@@ -104,6 +121,9 @@ def on_message(client, userdata, msg):
         # 先解析 JSON
         message_json = json.loads(payload)
         
+        # 自動回應
+        check_and_respond_control(client, msg.topic, message_json)
+        
         # 提取 deviceName 和 deviceMac
         topic_parts = msg.topic.split('/')
         if len(topic_parts) < 3:
@@ -118,7 +138,6 @@ def on_message(client, userdata, msg):
         if is_device_registered(device_name, device_mac, candidate_sensors):
             return  
             
-        message_json = json.loads(payload)
         if not device_name or not device_mac:
             logging.warning(f"Missing deviceName or deviceMac in message: {payload}")
             return
