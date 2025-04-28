@@ -1,5 +1,5 @@
 name: "curiejet integration"
-version: "1.1.4"
+version: "1.1.5"
 slug: "curiejet_integration"
 description: "This Home Assistant add-on listens to MQTT messages and dynamically generates 
   MQTT Discovery configurations for CurieJet devices (e.g., ZP2, ZH1). 
@@ -19,8 +19,8 @@ ingress: false
 # volumes:
 #   - /share:/share  
 
-volumes:
-  - /share:/share
+map:
+  - share:rw
 
 
 options:
