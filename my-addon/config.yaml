@@ -4,8 +4,7 @@ slug: "curiejet_integration"
 description: "This Home Assistant add-on listens to MQTT messages and dynamically generates 
   MQTT Discovery configurations for CurieJet devices (e.g., ZP2, ZH1). 
   It enables seamless integration of sensor and control data from various CurieJet models 
-  into your Home Assistant setup.
-"
+  into your Home Assistant setup."
 startup: "services"
 boot: "auto"
 arch:
@@ -15,6 +14,12 @@ arch:
 url: "https://github.com/YJ-spec/my-addon-repo"
 init: false
 ingress: false
+
+volumes:
+  - /share:/share  # 這將映射主機的 /share 目錄到容器的 /share 目錄
+
+mounts:
+  - share:rw  # 設定對 /share 資料夾的讀寫權限（替換了原本的 "map"）
 
 options:
   mqtt_topics: "+/+/data,+/+/control"

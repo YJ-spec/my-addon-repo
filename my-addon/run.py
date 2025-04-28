@@ -2,6 +2,8 @@ import logging
 import json
 import paho.mqtt.client as mqtt
 import requests
+import os
+import shutil
 
 # 設定日誌格式
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -169,8 +171,28 @@ def on_message(client, userdata, msg):
     except Exception as e:
         logging.error(f"Error processing message: {e}")
 
+def create_mqtt_bridge_conf():
+    """ 複製 MQTT 桥接配置文件到目标目录 """
+    source_file = '/external_bridge.conf'  # 源文件路徑
+    target_directory = '/share/mosquitto/'  # 目標目錄路徑
+
+    try:
+        # 確保目標目錄存在，如果不存在就創建
+        os.makedirs(target_directory, exist_ok=True)
+        
+        # 複製文件
+        shutil.copy(source_file, target_directory)
+        
+        # 記錄成功訊息
+        logging.info(f"File {source_file} has been copied to {target_directory}")
+    except Exception as e:
+        # 錯誤處理，記錄錯誤訊息
+        logging.error(f"Error copying file {source_file} to {target_directory}: {e}")
+        
 def main():
     logging.info("Add-on started")
+
+    create_mqtt_bridge_conf()
 
     client = mqtt.Client()
 
